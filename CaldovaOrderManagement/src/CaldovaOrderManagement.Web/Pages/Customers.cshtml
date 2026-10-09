@@ -1,0 +1,43 @@
+@page
+@model CaldovaOrderManagement.Web.Pages.CustomersModel
+@{ ViewData["Title"] = "Customer Lookup"; }
+
+<h1>Customer Lookup</h1>
+<p class="lead">Search by customer ID, name, email or phone. Leave blank to list customers (first 50).</p>
+
+<div class="card">
+    <form method="get" class="inline" onsubmit="this.classList.add('busy')">
+        <div>
+            <label for="q">Search</label>
+            <input id="q" name="q" class="wide" maxlength="100" value="@Model.Q" />
+        </div>
+        <button type="submit">Search</button>
+    </form>
+    <div class="loading">Searching…</div>
+</div>
+
+@if (Model.Error != null) { <div class="alert error">@Model.Error</div> }
+else if (Model.Customers.Count == 0)
+{
+    <div class="card empty">@(string.IsNullOrWhiteSpace(Model.Q) ? "No customers found." : $"No customers found matching “{Model.Q}”.")</div>
+}
+else
+{
+    <p class="muted">@Model.Customers.Count customer(s)</p>
+    @foreach (var c in Model.Customers)
+    {
+        <div class="card">
+            <h2>@c.Name <span class="muted">#@c.CustomerId</span>
+                <span class="badge @(c.IsActive ? "ok" : "neutral")">@(c.IsActive ? "Active" : "Inactive")</span></h2>
+            <p>@(c.Email ?? "No email") &middot; @(c.Phone ?? "No phone")</p>
+            <div class="grid2">
+                @foreach (var a in c.Addresses)
+                {
+                    <div><strong>@a.Type address</strong><br />@a.Formatted</div>
+                }
+                @if (c.Addresses.Count == 0) { <div class="muted">No addresses on file.</div> }
+            </div>
+            <p><a asp-page="/Orders" asp-route-customerId="@c.CustomerId">View orders (@c.OrderCount)</a></p>
+        </div>
+    }
+}

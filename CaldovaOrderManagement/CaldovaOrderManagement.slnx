@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CaldovaOrderManagement.Web/CaldovaOrderManagement.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CaldovaOrderManagement.Tests/CaldovaOrderManagement.Tests.csproj" />
+  </Folder>
+</Solution>

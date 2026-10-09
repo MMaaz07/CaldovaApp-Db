@@ -1,0 +1,109 @@
+@page
+@model CaldovaOrderManagement.Web.Pages.NewOrderModel
+@{ ViewData["Title"] = "New Order"; }
+
+<h1>New Order</h1>
+<p class="lead">Orders are saved as <strong>Pending</strong>. Quantities are validated against available inventory, but inventory is not deducted or reserved by this application.</p>
+
+@if (Model.SuccessOrderId != null)
+{
+    <div class="alert success">Order <a asp-page="/OrderDetails" asp-route-id="@Model.SuccessOrderId">#@Model.SuccessOrderId</a> was created successfully.</div>
+}
+@if (Model.Error != null) { <div class="alert error">@Model.Error</div> }
+@if (Model.Errors.Count > 0)
+{
+    <div class="alert error"><strong>Please fix the following:</strong><ul>@foreach (var e in Model.Errors) { <li>@e</li> }</ul></div>
+}
+
+@if (Model.Error == null)
+{
+    <form method="get" id="customerForm" class="card inline">
+        <div>
+            <label for="customerId">Customer</label>
+            <select id="customerId" name="customerId" onchange="this.form.submit()">
+                <option value="">— Select a customer —</option>
+                @foreach (var c in Model.Customers) { <option value="@c.CustomerId" selected="@(Model.CustomerId == c.CustomerId)">@c.Name (#@c.CustomerId)</option> }
+            </select>
+        </div>
+        <noscript><button type="submit">Load customer</button></noscript>
+    </form>
+
+    @if (Model.Customers.Count == 0) { <div class="card empty">No active customers found.</div> }
+    else if (Model.Products.Count == 0) { <div class="card empty">No active products found.</div> }
+    else
+    {
+        <form method="post" class="card" onsubmit="this.classList.add('busy')">
+            <input type="hidden" name="CustomerId" value="@Model.CustomerId" />
+            <div class="grid2">
+                <div>
+                    <label for="BillingAddressId">Billing address</label>
+                    <select id="BillingAddressId" name="BillingAddressId" style="width:100%">
+                        <option value="">— None —</option>
+                        @foreach (var a in Model.Addresses.Where(a => a.Type.Equals("Billing", StringComparison.OrdinalIgnoreCase)))
+                        { <option value="@a.AddressId" selected="@(Model.BillingAddressId == a.AddressId)">@a.Formatted</option> }
+                    </select>
+                </div>
+                <div>
+                    <label for="ShippingAddressId">Shipping address</label>
+                    <select id="ShippingAddressId" name="ShippingAddressId" style="width:100%">
+                        <option value="">— None —</option>
+                        @foreach (var a in Model.Addresses.Where(a => a.Type.Equals("Shipping", StringComparison.OrdinalIgnoreCase)))
+                        { <option value="@a.AddressId" selected="@(Model.ShippingAddressId == a.AddressId)">@a.Formatted</option> }
+                    </select>
+                </div>
+            </div>
+            @if (Model.CustomerId == null) { <p class="muted">Select a customer above to choose addresses.</p> }
+
+            <h2 style="margin-top:1rem">Order lines</h2>
+            <div class="table-wrap">
+            <table id="lines">
+                <thead><tr><th>Product</th><th>Quantity</th><th></th></tr></thead>
+                <tbody>
+                @for (var i = 0; i < Model.Lines.Count; i++)
+                {
+                    <tr class="line">
+                        <td>
+                            <select name="Lines[@i].ProductId">
+                                <option value="">— Select product —</option>
+                                @foreach (var p in Model.Products)
+                                {
+                                    <option value="@p.ProductId" selected="@(Model.Lines[i].ProductId == p.ProductId)">@p.Sku — @p.Name (@p.UnitPrice.ToString("C2"), @p.Available available)</option>
+                                }
+                            </select>
+                        </td>
+                        <td><input name="Lines[@i].Quantity" type="number" min="1" step="1" value="@Model.Lines[i].Quantity" style="width:100px" /></td>
+                        <td><button type="button" class="secondary remove">Remove</button></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            </div>
+            <p class="row-gap">
+                <button type="button" class="secondary" id="addLine">Add line</button>
+                <button type="submit">Place order</button>
+            </p>
+        </form>
+        <div class="loading">Saving order…</div>
+    }
+}
+
+@section Scripts {
+    <script>
+        const body = document.querySelector('#lines tbody');
+        if (body) {
+            const reindex = () => body.querySelectorAll('tr.line').forEach((tr, i) => {
+                tr.querySelectorAll('[name]').forEach(el => el.name = el.name.replace(/Lines\[\d+\]/, `Lines[${i}]`));
+            });
+            document.getElementById('addLine').addEventListener('click', () => {
+                const clone = body.querySelector('tr.line').cloneNode(true);
+                clone.querySelector('select').value = '';
+                clone.querySelector('input').value = '';
+                body.appendChild(clone); reindex();
+            });
+            body.addEventListener('click', e => {
+                if (!e.target.classList.contains('remove')) return;
+                if (body.querySelectorAll('tr.line').length > 1) { e.target.closest('tr').remove(); reindex(); }
+            });
+        }
+    </script>
+}

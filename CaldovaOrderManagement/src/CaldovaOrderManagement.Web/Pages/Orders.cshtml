@@ -1,0 +1,51 @@
+@page
+@model CaldovaOrderManagement.Web.Pages.OrdersModel
+@using CaldovaOrderManagement.Web.Data
+@{ ViewData["Title"] = "Order Lookup"; }
+
+<h1>Order Lookup</h1>
+<p class="lead">Filter orders by ID, customer, status or order date.</p>
+
+<div class="card">
+    <form method="get" class="inline" onsubmit="this.classList.add('busy')">
+        @if (Model.CustomerId.HasValue) { <input type="hidden" name="customerId" value="@Model.CustomerId" /> }
+        <div><label for="orderId">Order ID</label><input id="orderId" name="orderId" type="number" min="1" value="@Model.OrderId" style="width:110px" /></div>
+        <div><label for="customer">Customer name / email</label><input id="customer" name="customer" maxlength="100" value="@Model.Customer" /></div>
+        <div><label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">Any</option>
+                @foreach (var s in OrderStatuses.All) { <option value="@s" selected="@(Model.Status == s)">@s</option> }
+            </select></div>
+        <div><label for="from">From</label><input id="from" name="from" type="date" value="@Model.From?.ToString("yyyy-MM-dd")" /></div>
+        <div><label for="to">To</label><input id="to" name="to" type="date" value="@Model.To?.ToString("yyyy-MM-dd")" /></div>
+        <button type="submit">Search</button>
+        <a class="btn secondary" asp-page="/Orders">Clear</a>
+    </form>
+    <div class="loading">Searching…</div>
+    @if (Model.CustomerFilterName != null) { <p class="muted">Showing orders for customer #@Model.CustomerId (@Model.CustomerFilterName).</p> }
+</div>
+
+@if (Model.Error != null) { <div class="alert error">@Model.Error</div> }
+else if (Model.Orders.Count == 0) { <div class="card empty">No orders match the selected filters.</div> }
+else
+{
+    <p class="muted">@Model.Orders.Count order(s)@(Model.Orders.Count == 200 ? " (showing the most recent 200)" : "")</p>
+    <div class="card table-wrap">
+        <table>
+            <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Status</th><th class="num">Lines</th><th class="num">Total</th></tr></thead>
+            <tbody>
+            @foreach (var o in Model.Orders)
+            {
+                <tr>
+                    <td><a asp-page="/OrderDetails" asp-route-id="@o.OrderId">#@o.OrderId</a></td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td><span class="badge @OrderStatuses.Css(o.Status)">@o.Status</span></td>
+                    <td class="num">@o.LineCount</td>
+                    <td class="num">@o.Total.ToString("C2")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

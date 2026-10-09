@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+@inject IConfiguration Config
+@{
+    var envLabel = Config["Application:EnvironmentLabel"] ?? "SQL Server · CaldovaOrderManagement";
+    var current = (ViewContext.RouteData.Values["page"]?.ToString() ?? "").Trim('/');
+    string Nav(string page) => current.StartsWith(page, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Caldova Order Management</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<header class="topbar">
+    <button class="menu-toggle" type="button" aria-label="Toggle navigation" onclick="document.body.classList.toggle('nav-open')">&#9776;</button>
+    <div class="brand">Caldova Order Management</div>
+    <div class="topbar-meta">
+        <span class="env">@envLabel</span>
+        <span>@DateTime.Now.ToString("dddd, d MMM yyyy")</span>
+        <span class="user">Operations Team</span>
+    </div>
+</header>
+<div class="shell">
+    <nav class="sidebar" aria-label="Main navigation">
+        <a class="@Nav("Index")" asp-page="/Index">Dashboard</a>
+        <a class="@Nav("Products")" asp-page="/Products">Product Availability</a>
+        <a class="@Nav("Search")" asp-page="/Search">Traditional SQL Search</a>
+        <a class="@Nav("Customers")" asp-page="/Customers">Customer Lookup</a>
+        <a class="@Nav("NewOrder")" asp-page="/NewOrder">New Order</a>
+        <a class="@Nav("Orders")" asp-page="/Orders">Order Lookup</a>
+    </nav>
+    <main class="content">
+        @RenderBody()
+    </main>
+</div>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

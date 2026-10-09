@@ -1,0 +1,35 @@
+@page
+@model CaldovaOrderManagement.Web.Pages.ProductsModel
+@{ ViewData["Title"] = "Product Availability"; }
+
+<h1>Product Availability</h1>
+<p class="lead">Available quantity = quantity on hand minus reserved, summed across all inventory locations. Low stock means available quantity is at or below the combined reorder level.</p>
+
+<div class="card">
+    <form method="get" class="inline">
+        <div>
+            <label for="stock">Stock level</label>
+            <select id="stock" name="stock" onchange="this.form.submit()">
+                <option value="all" selected="@(Model.Stock is null or "all")">All products</option>
+                <option value="out" selected="@(Model.Stock == "out")">Out of stock</option>
+                <option value="low" selected="@(Model.Stock == "low")">Low stock</option>
+                <option value="in" selected="@(Model.Stock == "in")">In stock</option>
+            </select>
+        </div>
+        <noscript><button type="submit">Filter</button></noscript>
+    </form>
+</div>
+
+@if (Model.Error != null)
+{
+    <div class="alert error">@Model.Error</div>
+}
+else if (Model.Products.Count == 0)
+{
+    <div class="card empty">No products match the selected stock level.</div>
+}
+else
+{
+    <p class="muted">@Model.Products.Count product(s)</p>
+    <div class="card"><partial name="_ProductTable" model="Model.Products" /></div>
+}

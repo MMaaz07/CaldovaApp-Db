@@ -1,0 +1,58 @@
+:root { --navy:#0b1f3a; --navy2:#12294d; --accent:#2f80ed; --bg:#f3f5f9; --line:#dde2ea; --text:#1d2733; --muted:#667085; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--text); }
+a { color:var(--accent); }
+.topbar { background:var(--navy); color:#fff; display:flex; align-items:center; gap:1rem; padding:.75rem 1.25rem; flex-wrap:wrap; }
+.brand { font-size:1.25rem; font-weight:600; letter-spacing:.3px; }
+.topbar-meta { margin-left:auto; display:flex; gap:1.25rem; font-size:.875rem; flex-wrap:wrap; align-items:center; }
+.topbar-meta .env { background:var(--navy2); border:1px solid #2a4572; padding:.15rem .6rem; border-radius:999px; }
+.topbar-meta .user { font-weight:600; }
+.menu-toggle { display:none; background:none; border:0; color:#fff; font-size:1.5rem; cursor:pointer; }
+.shell { display:flex; min-height:calc(100vh - 56px); }
+.sidebar { width:230px; background:var(--navy2); padding:1rem 0; flex-shrink:0; }
+.sidebar a { display:block; color:#cfd8e8; text-decoration:none; padding:.7rem 1.4rem; border-left:4px solid transparent; }
+.sidebar a:hover { background:#1a3560; color:#fff; }
+.sidebar a.active { background:#1a3560; color:#fff; border-left-color:var(--accent); font-weight:600; }
+.content { flex:1; padding:1.5rem; min-width:0; }
+h1 { margin:0 0 .25rem; font-size:1.6rem; } h2 { font-size:1.15rem; margin:0 0 .75rem; }
+.lead { color:var(--muted); margin:0 0 1.25rem; }
+.card { background:#fff; border:1px solid var(--line); border-radius:8px; padding:1rem 1.25rem; margin-bottom:1.25rem; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1rem; margin-bottom:1.25rem; }
+.stat .label { color:var(--muted); font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; }
+.stat .value { font-size:2rem; font-weight:600; margin-top:.25rem; }
+.charts { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1rem; }
+.chart-box { position:relative; height:300px; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; background:#fff; }
+th,td { text-align:left; padding:.55rem .75rem; border-bottom:1px solid var(--line); font-size:.9rem; }
+th { background:#eef1f6; font-weight:600; white-space:nowrap; }
+td.num, th.num { text-align:right; }
+form.inline { display:flex; gap:.5rem; flex-wrap:wrap; align-items:flex-end; }
+label { display:block; font-size:.8rem; color:var(--muted); margin-bottom:.2rem; }
+input,select { padding:.5rem .6rem; border:1px solid #c3cad6; border-radius:5px; font:inherit; min-width:0; }
+input.wide { min-width:min(320px,100%); }
+button,.btn { background:var(--accent); color:#fff; border:0; border-radius:5px; padding:.55rem 1.1rem; font:inherit; cursor:pointer; text-decoration:none; display:inline-block; }
+button.secondary,.btn.secondary { background:#fff; color:var(--text); border:1px solid #c3cad6; }
+.badge { display:inline-block; padding:.1rem .55rem; border-radius:999px; font-size:.78rem; font-weight:600; }
+.badge.ok { background:#dcf5e4; color:#146c2e; } .badge.warn { background:#fff1cc; color:#8a5a00; }
+.badge.bad { background:#fde0e0; color:#a12020; } .badge.info { background:#dce9fd; color:#1a4fa0; }
+.badge.neutral { background:#e7eaf0; color:#3b4656; }
+.alert { padding:.75rem 1rem; border-radius:6px; margin-bottom:1rem; border:1px solid; }
+.alert.error { background:#fdecec; border-color:#f3b6b6; color:#8c1d1d; }
+.alert.success { background:#e6f7ec; border-color:#a9dfbb; color:#14532d; }
+.alert.info { background:#eaf2fe; border-color:#b7d0f6; color:#173f7a; }
+.alert ul { margin:.3rem 0 0 1.2rem; padding:0; }
+.empty { color:var(--muted); text-align:center; padding:2rem 1rem; }
+.field-error { color:#a12020; font-size:.85rem; }
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
+.muted { color:var(--muted); } .row-gap > * { margin-right:.5rem; }
+.loading { display:none; color:var(--muted); margin:.5rem 0; }
+form.busy + .loading, .busy-msg.show { display:block; }
+@media (max-width:800px) {
+  .menu-toggle { display:block; }
+  .topbar-meta { margin-left:0; width:100%; }
+  .sidebar { display:none; position:absolute; z-index:10; top:auto; width:100%; }
+  body.nav-open .sidebar { display:block; }
+  .shell { flex-direction:column; }
+  .content { padding:1rem; }
+}

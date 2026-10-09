@@ -1,0 +1,60 @@
+@page
+@model CaldovaOrderManagement.Web.Pages.OrderDetailsModel
+@using CaldovaOrderManagement.Web.Data
+@{ ViewData["Title"] = "Order Details"; }
+
+<p><a asp-page="/Orders">&larr; Back to Order Lookup</a></p>
+
+@if (Model.Error != null) { <div class="alert error">@Model.Error</div> }
+else if (Model.Order == null) { <div class="card empty">Order #@Model.Id was not found.</div> }
+else
+{
+    var o = Model.Order;
+    <h1>Order #@o.Summary.OrderId <span class="badge @OrderStatuses.Css(o.Summary.Status)">@o.Summary.Status</span></h1>
+    <p class="lead">Placed @o.Summary.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+
+    <div class="grid2">
+        <div class="card"><h2>Customer</h2>
+            <a asp-page="/Customers" asp-route-q="@o.Summary.CustomerId">@o.Summary.CustomerName</a>
+            <div class="muted">@(o.CustomerEmail ?? "No email")</div>
+            <p><a asp-page="/Orders" asp-route-customerId="@o.Summary.CustomerId">All orders for this customer</a></p></div>
+        <div class="card"><h2>Billing address</h2>@(o.Billing?.Formatted ?? "Not specified")</div>
+        <div class="card"><h2>Shipping address</h2>@(o.Shipping?.Formatted ?? "Not specified")</div>
+    </div>
+
+    <div class="card table-wrap"><h2>Order lines</h2>
+        @if (o.Lines.Count == 0) { <div class="empty">This order has no lines.</div> }
+        else
+        {
+            <table>
+                <thead><tr><th>SKU</th><th>Product</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Line total</th></tr></thead>
+                <tbody>
+                @foreach (var l in o.Lines)
+                {
+                    <tr><td>@l.Sku</td><td>@l.ProductName</td><td class="num">@l.Quantity</td>
+                        <td class="num">@l.UnitPrice.ToString("C2")</td><td class="num">@l.LineTotal.ToString("C2")</td></tr>
+                }
+                </tbody>
+                <tfoot><tr><th colspan="4" class="num">Total</th><th class="num">@o.Summary.Total.ToString("C2")</th></tr></tfoot>
+            </table>
+        }
+    </div>
+
+    <div class="card table-wrap"><h2>Shipments</h2>
+        @if (o.Shipments.Count == 0) { <div class="empty">No shipments recorded for this order.</div> }
+        else
+        {
+            <table>
+                <thead><tr><th>Shipment</th><th>Status</th><th>Shipped</th><th>Carrier</th><th>Tracking</th><th>Delivered</th></tr></thead>
+                <tbody>
+                @foreach (var s in o.Shipments)
+                {
+                    <tr><td>#@s.ShipmentId</td><td><span class="badge @OrderStatuses.Css(s.Status)">@s.Status</span></td>
+                        <td>@(s.ShipmentDate?.ToString("yyyy-MM-dd") ?? "—")</td><td>@(s.Carrier ?? "—")</td>
+                        <td>@(s.TrackingNumber ?? "—")</td><td>@(s.DeliveredDate?.ToString("yyyy-MM-dd") ?? "—")</td></tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+}

@@ -1,0 +1,64 @@
+@page
+@model CaldovaOrderManagement.Web.Pages.IndexModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+<h1>Dashboard</h1>
+<p class="lead">Live summary calculated from the CaldovaOrderManagement database.</p>
+
+@if (Model.Error != null)
+{
+    <div class="alert error"><strong>Unable to load dashboard.</strong> @Model.Error</div>
+}
+else
+{
+    @if (Model.MissingTables.Count > 0)
+    {
+        <div class="alert error">Connected to <strong>@Model.DatabaseName</strong>, but these required tables are missing: @string.Join(", ", Model.MissingTables).</div>
+    }
+    else
+    {
+        <div class="alert info">Connected to database <strong>@Model.DatabaseName</strong>.</div>
+    }
+    @if (Model.Data != null)
+    {
+        var d = Model.Data;
+        <div class="cards">
+            <div class="card stat"><div class="label">Total Products</div><div class="value">@d.TotalProducts</div></div>
+            <div class="card stat"><div class="label">Available Products</div><div class="value">@d.AvailableProducts</div></div>
+            <div class="card stat"><div class="label">Open Orders</div><div class="value">@d.OpenOrders</div></div>
+            <div class="card stat"><div class="label">Pending Shipments</div><div class="value">@d.PendingShipments</div></div>
+        </div>
+        <div class="charts">
+            <div class="card">
+                <h2>Products by Category</h2>
+                @if (d.ProductsByCategory.Sum(c => c.Count) == 0) { <div class="empty">No products found.</div> }
+                else { <div class="chart-box"><canvas id="catChart"></canvas></div> }
+            </div>
+            <div class="card">
+                <h2>Orders by Status</h2>
+                @if (d.OrdersByStatus.Count == 0) { <div class="empty">No orders found.</div> }
+                else { <div class="chart-box"><canvas id="statusChart"></canvas></div> }
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    @if (Model.Data != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+        <script id="chart-data" type="application/json">@Html.Raw(Model.ChartJson)</script>
+        <script>
+            const data = JSON.parse(document.getElementById('chart-data').textContent);
+            const palette = ['#2f80ed','#27ae60','#f2994a','#9b51e0','#eb5757','#56ccf2','#f2c94c','#6fcf97'];
+            const catEl = document.getElementById('catChart');
+            if (catEl && window.Chart) new Chart(catEl, { type: 'bar',
+                data: { labels: data.categories.map(c => c.name), datasets: [{ label: 'Products', data: data.categories.map(c => c.count), backgroundColor: '#2f80ed' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+            const stEl = document.getElementById('statusChart');
+            if (stEl && window.Chart) new Chart(stEl, { type: 'doughnut',
+                data: { labels: data.statuses.map(c => c.name), datasets: [{ data: data.statuses.map(c => c.count), backgroundColor: palette }] },
+                options: { maintainAspectRatio: false } });
+        </script>
+    }
+}
