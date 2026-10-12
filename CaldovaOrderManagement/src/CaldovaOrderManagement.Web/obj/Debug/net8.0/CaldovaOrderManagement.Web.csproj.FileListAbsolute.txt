@@ -71,3 +71,4 @@ C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web
 C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\CaldovaOrderManagement.Web.pdb
 C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\CaldovaOrderManagement.Web.genruntimeconfig.cache
 C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\ref\CaldovaOrderManagement.Web.dll
+C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\CaldovaOrderManagement.Web.sourcelink.json
