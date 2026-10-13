@@ -3,13 +3,13 @@
 @{ ViewData["Title"] = "Traditional SQL Search"; }
 
 <h1>Traditional SQL Search</h1>
-<p class="lead">Keyword search using SQL <code>LIKE</code> across product SKU, name and description text. Matching is literal; there is no semantic or synonym matching.</p>
+<p class="lead">Keyword search using SQL <code>LIKE</code> on the medicine name only. Matching is literal; there is no semantic or synonym matching.</p>
 
 <div class="card">
     <form method="get" class="inline" onsubmit="this.classList.add('busy')">
         <div>
             <label for="q">Keyword</label>
-            <input id="q" name="q" class="wide" maxlength="100" value="@Model.Q" placeholder="e.g. cable, SKU or description text" />
+            <input id="q" name="q" class="wide" maxlength="100" value="@Model.Q" placeholder="e.g. Paracetamol, Dolo 650" />
         </div>
         <button type="submit">Search</button>
     </form>
@@ -30,6 +30,6 @@ else if (Model.Results != null)
     else
     {
         <p class="muted">@Model.Results.Count result(s) for “@Model.Q”</p>
-        <div class="card"><partial name="_ProductTable" model="Model.Results" /></div>
+        <div class="card"><partial name="_ProductTable" model="Model.Results" view-data='new ViewDataDictionary(ViewData) { { "ShowCategory", false } }' /></div>
     }
 }

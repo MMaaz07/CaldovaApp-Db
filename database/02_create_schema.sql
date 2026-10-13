@@ -35,11 +35,13 @@ CREATE INDEX IX_ProductCatalog_ProductName ON dbo.ProductCatalog(ProductName);
 CREATE TABLE dbo.ProductDescriptions (
     ProductDescriptionID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_ProductDescriptions PRIMARY KEY,
     ProductID       INT NOT NULL CONSTRAINT FK_ProductDescriptions_Product REFERENCES dbo.ProductCatalog(ProductID),
-    DescriptionType NVARCHAR(50)  NOT NULL,
-    DescriptionText NVARCHAR(1000) NOT NULL,
+    LanguageCode    NVARCHAR(10)  NOT NULL CONSTRAINT DF_ProductDescriptions_Language DEFAULT (N'en-US'),
+    ShortDescription NVARCHAR(300) NOT NULL,
+    LongDescription NVARCHAR(2000) NOT NULL,
+    Specifications  NVARCHAR(1000) NULL,
     CreatedDate     DATETIME2(0) NOT NULL CONSTRAINT DF_ProductDescriptions_Created DEFAULT (SYSDATETIME()),
     ModifiedDate    DATETIME2(0) NOT NULL CONSTRAINT DF_ProductDescriptions_Modified DEFAULT (SYSDATETIME()),
-    CONSTRAINT UQ_ProductDescriptions_ProductType UNIQUE (ProductID, DescriptionType)
+    CONSTRAINT UQ_ProductDescriptions_ProductLanguage UNIQUE (ProductID, LanguageCode)
 );
 
 CREATE TABLE dbo.Inventory (

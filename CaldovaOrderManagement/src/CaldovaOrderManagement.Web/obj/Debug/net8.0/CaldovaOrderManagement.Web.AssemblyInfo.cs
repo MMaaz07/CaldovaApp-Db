@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CaldovaOrderManagement.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31c0dddd1d89b89db86e27f4bba0021d1f2f0fba")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d4955ebf897bb9daede4f03e09f18bb15f0f719")]
 [assembly: System.Reflection.AssemblyProductAttribute("CaldovaOrderManagement.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CaldovaOrderManagement.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,16 +1,17 @@
 @using CaldovaOrderManagement.Web.Data
 @using System.Globalization
 @model IReadOnlyList<ProductRow>
+@{ var showCategory = ViewData["ShowCategory"] as bool? ?? true; }
 <div class="table-wrap">
 <table>
-    <thead><tr><th>SKU</th><th>Product</th><th>Category</th><th class="num">Unit price</th><th class="num">Available</th><th>Stock</th></tr></thead>
+    <thead><tr><th>SKU</th><th>Product</th>@if (showCategory) { <th>Category</th> }<th class="num">Unit price</th><th class="num">Available</th><th>Stock</th></tr></thead>
     <tbody>
     @foreach (var p in Model)
     {
         <tr>
             <td>@p.Sku</td>
             <td>@p.Name @if (!p.IsActive) { <span class="badge neutral">Inactive</span> }</td>
-            <td>@p.Category</td>
+            @if (showCategory) { <td>@p.Category</td> }
             <td class="num">$@p.UnitPrice.ToString("N2", CultureInfo.InvariantCulture)</td>
             <td class="num">@p.Available</td>
             <td><span class="badge @p.StockCss">@p.StockState</span></td>

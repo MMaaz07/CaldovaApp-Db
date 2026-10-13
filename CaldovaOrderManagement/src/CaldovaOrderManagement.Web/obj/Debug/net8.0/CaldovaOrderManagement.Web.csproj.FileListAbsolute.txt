@@ -72,3 +72,12 @@ C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web
 C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\CaldovaOrderManagement.Web.genruntimeconfig.cache
 C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\ref\CaldovaOrderManagement.Web.dll
 C:\Users\Admin\Desktop\App\CaldovaOrderManagement\src\CaldovaOrderManagement.Web\obj\Debug\net8.0\CaldovaOrderManagement.Web.sourcelink.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\appsettings.Development.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\appsettings.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.staticwebassets.runtime.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.staticwebassets.endpoints.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.exe
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.deps.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.runtimeconfig.json
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.dll
+C:\Users\Admin\AppData\Local\Temp\caldova_chk\CaldovaOrderManagement.Web.pdb

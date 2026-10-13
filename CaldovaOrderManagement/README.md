@@ -5,7 +5,7 @@ Internal operations app for the `CaldovaOrderManagement` SQL Server database. Ta
 ## Schema the app relies on
 The SQL scripts in [database/](../database/README.md) (a sibling folder of this project) create and seed the database (design and assumptions are documented there). The app follows that design:
 
-`ProductCategories` ← `ProductCatalog` ← `ProductDescriptions`, `Inventory` (multiple locations per product);
+`ProductCategories` ← `ProductCatalog` ← `ProductDescriptions` (one row per product and `LanguageCode`: `ShortDescription`, `LongDescription`, `Specifications`), `Inventory` (multiple locations per product);
 `Customers` ← `CustomerAddresses` (Billing/Shipping); `Customers` ← `Orders` (→ billing/shipping `CustomerAddresses`) ← `OrderLines` (→ `ProductCatalog`), `Shipments` (many per order).
 
 Columns used are exactly those in that design. **Verify against your real scripts**; the Dashboard shows missing tables, and a missing column yields a clear "schema differs" error.
@@ -35,5 +35,5 @@ Database integration tests are skipped unless `ConnectionStrings__CaldovaOrderMa
 - The app never creates, migrates or seeds the database.
 - New orders are inserted as `Pending` with their lines in one transaction (rolled back on any failure). Line prices are copied from the current `ProductCatalog.UnitPrice`.
 - **Stock is validated but not deducted or reserved**: the schema has no reservation workflow tied to orders, so `Inventory` is never modified.
-- Traditional search is parameterized `LIKE` over SKU, product name and `ProductDescriptions.DescriptionText`; no semantic/vector search.
+- Traditional search is a parameterized `LIKE` on `ProductCatalog.ProductName` only (no SKU, category or description matching), and its results hide the category. Semantic search uses the separate `dbo.ProductDescriptionEmbeddings` table created by `Embedding_Script.sql` (the app itself does not create it).
 - The dashboard charts load Chart.js from a CDN.

@@ -24,7 +24,7 @@ Only `CustomerAddresses` columns `AddressID`, `CustomerID`, `AddressType`, `Addr
 |---|---|
 | ProductCategories | `CategoryName` unique. |
 | ProductCatalog | FK to category; `SKU` unique; `UnitPrice DECIMAL(10,2) >= 0`. |
-| ProductDescriptions | Many per product; one per `DescriptionType` (Overview, Packaging in the seed). Searched with plain `LIKE`; no vector/AI tables. |
+| ProductDescriptions | One row per product and `LanguageCode` (`en-US` in the seed) with `ShortDescription`, `LongDescription` and optional `Specifications`. Searched with plain `LIKE` by the app. Embeddings live in a separate table, `dbo.ProductDescriptionEmbeddings` (FKs to `ProductCatalog` and `ProductDescriptions`, `VECTOR(1536)`), created by [Embedding_Script.sql](../Embedding_Script.sql) (needs Azure SQL / SQL Server 2025 vector support and an Azure OpenAI embedding deployment). |
 | Inventory | One row per product per `LocationName`; `QuantityOnHand`, `QuantityReserved`, `ReorderLevel` >= 0 and `QuantityReserved <= QuantityOnHand`, so available quantity can never be negative. |
 | Customers | `Email` unique when present. |
 | CustomerAddresses | `AddressType` is `Billing` or `Shipping`; a customer may have several of each. |
@@ -35,6 +35,6 @@ Only `CustomerAddresses` columns `AddressID`, `CustomerID`, `AddressType`, `Addr
 Other assumptions: dates are `DATETIME2(0)` local server time; inventory is not linked to orders (reserved quantities are static demo values); currency is not modelled (sample prices are fictional, written as INR-scale numbers).
 
 ## Seed data summary
-6 categories, 31 tablet products (e.g. Paracetamol, Dolo 650, Crocin Advance, Calpol, Saridon, Zerodol-P/SP, Combiflam, Allegra, Pantop, Augmentin, Shelcal, Telma), 62 descriptions, 59 inventory rows across Mumbai/Delhi/Bengaluru (with out-of-stock and low-stock products and one inactive product), 10 fictional customers (one inactive) with 22 addresses, 16 orders covering every status, 42 order lines and 14 shipments covering every shipment status (including an order with no shipments and orders with several).
+6 categories, 31 tablet products (e.g. Paracetamol, Dolo 650, Crocin Advance, Calpol, Saridon, Zerodol-P/SP, Combiflam, Allegra, Pantop, Augmentin, Shelcal, Telma), 31 descriptions (one `en-US` row per product), 59 inventory rows across Mumbai/Delhi/Bengaluru (with out-of-stock and low-stock products and one inactive product), 10 fictional customers (one inactive) with 22 addresses, 16 orders covering every status, 42 order lines and 14 shipments covering every shipment status (including an order with no shipments and orders with several).
 
 Brand names are used only as recognizable examples. SKUs (`CAL-…`), prices, stock, customers and orders are fictional; nothing here is medical advice, real inventory or current market pricing.

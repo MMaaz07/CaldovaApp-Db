@@ -90,8 +90,7 @@ public class CaldovaRepository
     public Task<List<ProductRow>> SearchProductsAsync(string term, CancellationToken ct = default)
     {
         var sql = ProductSelect + @"
-            WHERE p.SKU LIKE @t ESCAPE '\' OR p.ProductName LIKE @t ESCAPE '\'
-               OR EXISTS (SELECT 1 FROM ProductDescriptions d WHERE d.ProductID = p.ProductID AND d.DescriptionText LIKE @t ESCAPE '\')"
+            WHERE p.ProductName LIKE @t ESCAPE '\'"
             + ProductGroup + " ORDER BY p.ProductName";
         return _db.QueryAsync(sql, MapProduct, new[] { P("@t", "%" + EscapeLike(term) + "%") }, ct);
     }

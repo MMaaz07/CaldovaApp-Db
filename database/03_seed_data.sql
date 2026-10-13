@@ -69,16 +69,80 @@ SELECT c.CategoryID, p.SKU, p.Name, p.Price, p.Active, DATEADD(DAY, -120, SYSDAT
 FROM #p p JOIN dbo.ProductCategories c ON c.CategoryName = p.Cat
 ORDER BY p.SKU;
 
--- Two searchable descriptions per product
-INSERT dbo.ProductDescriptions (ProductID, DescriptionType, DescriptionText)
-SELECT pc.ProductID, N'Overview',
-       CONCAT(p.Name, N' tablets containing ', p.Ingredient, N'. Catalogue category: ', p.Area,
-              N'. Demonstration text only; not medical advice.')
-FROM #p p JOIN dbo.ProductCatalog pc ON pc.SKU = p.SKU
-UNION ALL
-SELECT pc.ProductID, N'Packaging',
-       CONCAT(p.Name, N' is supplied as a ', p.Pack, N'. Store in a cool, dry place away from direct sunlight (sample catalogue text).')
-FROM #p p JOIN dbo.ProductCatalog pc ON pc.SKU = p.SKU;
+-- One English description per product: short summary, long natural-language description, structured specifications.
+CREATE TABLE #d (SKU NVARCHAR(40), ShortDesc NVARCHAR(300), LongDesc NVARCHAR(2000));
+INSERT #d VALUES
+ (N'CAL-PN-001', N'Paracetamol 500 mg tablets to reduce fever and relieve mild to moderate pain.',
+  N'Paracetamol 500 mg is a widely used pain reliever and fever reducer (analgesic and antipyretic). It is commonly used to bring down a high temperature during fever and to ease headache, body ache, toothache and other mild pain.'),
+ (N'CAL-PN-002', N'Dolo 650 paracetamol tablets for fever and mild to moderate pain.',
+  N'Dolo 650 contains Paracetamol 650 mg, a higher-strength paracetamol tablet used to reduce fever and relieve mild to moderate pain such as headache, body ache and pain associated with colds or flu.'),
+ (N'CAL-PN-003', N'Crocin Advance 500 paracetamol tablets for fever and headache.',
+  N'Crocin Advance 500 contains Paracetamol 500 mg in a fast-disintegrating tablet. It is commonly used to lower fever and relieve headache, muscle ache and other mild pain.'),
+ (N'CAL-PN-004', N'Calpol 500 paracetamol tablets for fever and mild pain.',
+  N'Calpol 500 contains Paracetamol 500 mg and is used to reduce fever and relieve mild pain such as headache, toothache and general body ache.'),
+ (N'CAL-PN-005', N'Saridon combination tablets for headache relief.',
+  N'Saridon combines Paracetamol, Propyphenazone and Caffeine. The combination is used for quick relief from headache, including tension headache and headache with mild fever.'),
+ (N'CAL-PN-006', N'Zerodol-P tablets for pain with inflammation.',
+  N'Zerodol-P combines Aceclofenac, an anti-inflammatory pain reliever, with Paracetamol. It is used for pain and inflammation such as joint pain, muscle pain, back pain and toothache.'),
+ (N'CAL-PN-007', N'Zerodol-SP tablets for pain with swelling.',
+  N'Zerodol-SP combines Aceclofenac, Paracetamol and Serratiopeptidase. It is used for pain with swelling and inflammation, for example after injury, sprain or dental procedures.'),
+ (N'CAL-PN-008', N'Combiflam ibuprofen and paracetamol tablets for pain and fever.',
+  N'Combiflam combines Ibuprofen and Paracetamol. It is used to relieve pain with inflammation, such as headache, toothache, muscle pain and period pain, and to reduce fever.'),
+ (N'CAL-PN-009', N'Brufen 400 ibuprofen tablets for pain and inflammation.',
+  N'Brufen 400 contains Ibuprofen 400 mg, a non-steroidal anti-inflammatory drug (NSAID). It is used to relieve pain and inflammation from conditions such as arthritis, muscle sprains, backache and dental pain, and to lower fever.'),
+ (N'CAL-AC-001', N'Cetirizine 10 mg antihistamine tablets for allergy symptoms.',
+  N'Cetirizine 10 mg is an antihistamine used to relieve allergy symptoms such as sneezing, runny nose, itchy or watery eyes, and itchy skin rash (hives).'),
+ (N'CAL-AC-002', N'Allegra 120 fexofenadine tablets for allergy symptoms.',
+  N'Allegra 120 contains Fexofenadine 120 mg, a non-drowsy antihistamine used for seasonal allergic rhinitis (hay fever) and chronic hives, relieving sneezing, runny nose and itching.'),
+ (N'CAL-AC-003', N'Montair LC tablets for allergy and cold symptoms.',
+  N'Montair LC combines Montelukast and Levocetirizine. It is used for allergic rhinitis and allergic cold symptoms such as sneezing, blocked or runny nose and itching, including allergy-related breathing discomfort.'),
+ (N'CAL-AC-004', N'Avil 25 pheniramine tablets for allergy symptoms.',
+  N'Avil 25 contains Pheniramine 25 mg, an antihistamine used to relieve allergic reactions such as itching, skin rash, sneezing and watery eyes. It may cause drowsiness.'),
+ (N'CAL-AC-005', N'Sinarest tablets for cold, congestion and flu symptoms.',
+  N'Sinarest combines Paracetamol, Phenylephrine and Chlorpheniramine. It is used for common cold and flu symptoms such as blocked nose, sneezing, runny nose, headache and fever.'),
+ (N'CAL-GI-001', N'Pantop 40 pantoprazole tablets for acidity and acid reflux.',
+  N'Pantop 40 contains Pantoprazole 40 mg, a proton pump inhibitor that reduces stomach acid. It is used for acidity, heartburn, acid reflux (GERD) and stomach ulcers.'),
+ (N'CAL-GI-002', N'Digene chewable antacid tablets for acidity and gas.',
+  N'Digene is a chewable antacid combination used for fast relief from acidity, heartburn, indigestion, gas and a feeling of fullness after meals.'),
+ (N'CAL-GI-003', N'Rantac 150 ranitidine tablets for acidity (discontinued demo item).',
+  N'Rantac 150 contains Ranitidine 150 mg, an acid reducer that was used for acidity, heartburn and stomach ulcers. It is kept in this demo catalogue only as a discontinued, inactive item.'),
+ (N'CAL-GI-004', N'Gelusil MPS chewable antacid tablets for acidity and bloating.',
+  N'Gelusil MPS is a chewable antacid and anti-gas combination used to relieve acidity, heartburn, bloating, flatulence and stomach discomfort.'),
+ (N'CAL-GI-005', N'Domstal 10mg domperidone tablets for nausea and stomach upset.',
+  N'Domstal 10mg contains Domperidone 10 mg. It is used to relieve nausea, vomiting, bloating and a feeling of fullness or upset stomach.'),
+ (N'CAL-AB-001', N'Azithral 500 azithromycin antibiotic tablets (demo).',
+  N'Azithral 500 contains Azithromycin 500 mg, a macrolide antibiotic used for bacterial infections such as respiratory tract, throat, ear and skin infections. Antibiotics are taken only on a doctor''s prescription.'),
+ (N'CAL-AB-002', N'Augmentin 625 amoxicillin and clavulanic acid antibiotic tablets (demo).',
+  N'Augmentin 625 combines Amoxicillin and Clavulanic Acid, a broad-spectrum antibiotic used for bacterial infections of the chest, sinuses, ear, urinary tract and skin. Antibiotics are taken only on a doctor''s prescription.'),
+ (N'CAL-AB-003', N'Taxim-O 200 cefixime antibiotic tablets (demo).',
+  N'Taxim-O 200 contains Cefixime 200 mg, a cephalosporin antibiotic used for bacterial infections such as throat, chest, ear and urinary tract infections. Antibiotics are taken only on a doctor''s prescription.'),
+ (N'CAL-AB-004', N'Cifran 500 ciprofloxacin antibiotic tablets (demo).',
+  N'Cifran 500 contains Ciprofloxacin 500 mg, a fluoroquinolone antibiotic used for bacterial infections of the urinary tract, stomach and intestines, and respiratory tract. Antibiotics are taken only on a doctor''s prescription.'),
+ (N'CAL-VT-001', N'Shelcal 500 calcium and vitamin D3 tablets for bone health.',
+  N'Shelcal 500 combines Calcium and Vitamin D3. It is a supplement for strong bones and teeth, commonly used for calcium deficiency, osteoporosis prevention and during pregnancy as advised by a doctor.'),
+ (N'CAL-VT-002', N'Limcee 500 chewable vitamin C tablets.',
+  N'Limcee 500 Chewable contains Vitamin C 500 mg. It is a supplement that supports immunity, helps the body absorb iron and is used to prevent or correct vitamin C deficiency.'),
+ (N'CAL-VT-003', N'Neurobion Forte vitamin B-complex tablets.',
+  N'Neurobion Forte is a Vitamin B-complex supplement (including B1, B6 and B12) that supports nerve health and energy metabolism, used for vitamin B deficiency, tingling or numbness and general weakness.'),
+ (N'CAL-VT-004', N'Zincovit multivitamin, multimineral and zinc tablets.',
+  N'Zincovit is a multivitamin and multimineral supplement with Zinc. It is used to fill nutritional gaps, support immunity and general wellbeing, and during recovery from illness.'),
+ (N'CAL-CD-001', N'Ecosprin 75 low-dose aspirin tablets for cardiac care.',
+  N'Ecosprin 75 contains Aspirin 75 mg, a low-dose antiplatelet. It is used to help prevent blood clots, and reduce the risk of heart attack and stroke in people with heart disease, as advised by a doctor.'),
+ (N'CAL-CD-002', N'Glycomet 500 metformin tablets for controlling blood sugar in type 2 diabetes.',
+  N'Glycomet 500 contains Metformin 500 mg, an oral antidiabetic medicine. It is used to control high blood sugar (glucose) levels in type 2 diabetes, usually along with diet and exercise.'),
+ (N'CAL-CD-003', N'Telma 40 telmisartan tablets for high blood pressure (hypertension).',
+  N'Telma 40 contains Telmisartan 40 mg, an angiotensin receptor blocker. It is used to treat hypertension (high blood pressure) and to lower the risk of heart attack and stroke in people with cardiovascular disease.'),
+ (N'CAL-CD-004', N'Amlokind 5 amlodipine tablets for high blood pressure and angina.',
+  N'Amlokind 5 contains Amlodipine 5 mg, a calcium channel blocker. It is used to treat hypertension (high blood pressure) and to prevent chest pain (angina) by relaxing blood vessels.');
+
+INSERT dbo.ProductDescriptions (ProductID, LanguageCode, ShortDescription, LongDescription, Specifications)
+SELECT pc.ProductID, N'en-US', d.ShortDesc, d.LongDesc,
+       CONCAT(N'Active ingredient: ', p.Ingredient, N' | Dosage form: Tablet | Pack size: ', p.Pack,
+              N' | Therapeutic area: ', p.Area, N' | Storage: Store in a cool, dry place away from direct sunlight',
+              N' | Demonstration catalogue text only; not medical advice.')
+FROM #p p
+JOIN #d d ON d.SKU = p.SKU
+JOIN dbo.ProductCatalog pc ON pc.SKU = p.SKU;
 
 -- Inventory: SKU, location, on hand, reserved, reorder level (demo values, varied on purpose)
 CREATE TABLE #i (SKU NVARCHAR(40), Loc NVARCHAR(100), OnHand INT, Reserved INT, Reorder INT);
